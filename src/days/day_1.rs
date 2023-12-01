@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use crate::days::solution::Solution;
-pub struct Day1_P1;
-pub struct Day1_P2 {
+pub struct Day1P1;
+pub struct Day1P2 {
     hashmap: HashMap<String, u8>,
 }
 
-impl Solution for Day1_P1 {
+impl Solution for Day1P1 {
     fn solve(&self, input: &str) {
         let input = self.get_input(input);
         println!("Total: {}", self.calculate_first_last(&input));
@@ -13,7 +13,7 @@ impl Solution for Day1_P1 {
 
 }
 
-impl Solution for Day1_P2 {
+impl Solution for Day1P2 {
     fn solve(&self, input: &str) {
         let input = self.get_input(input);
         println!("Total: {}", self.calculate_first_last(&input));
@@ -21,7 +21,7 @@ impl Solution for Day1_P2 {
 }
 
 
-impl Day1_P1 {
+impl Day1P1 {
     fn calculate_first_last(&self, lines: &str) -> i32 {
         let mut total = 0;
         for line in lines.lines() {
@@ -34,28 +34,28 @@ impl Day1_P1 {
     }
 
     fn get_combined_digit(&self, line: &str) -> String {
-        let first_digit = Self::get_first_digit(&line);
+        let first_digit = Self::get_first_digit(line);
         let last_digit = Self::get_first_digit(&line.chars().rev().collect::<String>());
 
         let mut combine_digit = String::new();
         combine_digit.push(first_digit);
         combine_digit.push(last_digit);
 
-        return combine_digit;
+        combine_digit
     }
 
 
     fn get_first_digit(line: &str) -> char {
         for (_, c) in line.chars().enumerate() {
             if !c.is_numeric() { continue; }
-            return c.clone();
+            return c;
         }
 
         panic!("No digit found in line: {}", line);
     }
 }
 
-impl Day1_P2 {
+impl Day1P2 {
     pub fn new() -> Self {
         let hashmap = HashMap::from([
             ("one".to_owned(), 1),
@@ -115,7 +115,7 @@ impl Day1_P2 {
             return found_word;
         }
 
-        return least_number;
+        least_number
     }
     
     fn get_last_digit(&self, line: &str) -> u8 {
@@ -160,7 +160,7 @@ mod tests {
     #[test]
     fn test_day_1_p1() {
         // Thoroughly testing indeed.
-        let day_1_p1 = Day1_P1;
+        let day_1_p1 = Day1P1;
         assert_eq!(day_1_p1.calculate_first_last(
 "1abc2
 pqr3stu8vwx
@@ -171,7 +171,7 @@ treb7uchet"), 142);
 
     #[test]
     fn test_day_1_part_two_get_first_digit() {
-        let day_1_p2 = Day1_P2::new();
+        let day_1_p2 = Day1P2::new();
 
         assert_eq!(day_1_p2.get_first_digit("threefourfive"), 3);
         assert_eq!(day_1_p2.get_first_digit("sevenfivefournine"), 7);
@@ -182,7 +182,7 @@ treb7uchet"), 142);
 
     #[test]
     fn test_day_1_part_two_get_last_digit() {
-        let day_1_p2 = Day1_P2::new();
+        let day_1_p2 = Day1P2::new();
 
         assert_eq!(day_1_p2.get_last_digit("threefourfive"), 5);
         assert_eq!(day_1_p2.get_last_digit("threefourfive876"), 6);
@@ -192,7 +192,7 @@ treb7uchet"), 142);
 
     #[test]
     fn test_day_1_part_two_test_data() {
-        let day_1_p2 = Day1_P2::new();
+        let day_1_p2 = Day1P2::new();
 
         assert_eq!(day_1_p2.calculate_first_last(
 "two1nine
