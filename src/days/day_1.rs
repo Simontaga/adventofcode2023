@@ -126,16 +126,16 @@ impl Day1P2 {
         for word in &self.hashmap  {
             let matches = line.match_indices(word.0);
             let last_word = matches.last();
+
             if last_word.is_none() { continue; }
 
-            let (i,_) = last_word.unwrap();
-
-            if i > highest_word_index {
-                highest_word_index = i;
+            let (word_index,_) = last_word.unwrap();
+            if word_index > highest_word_index {
+                highest_word_index = word_index;
                 found_word_num = *word.1;
              } 
         }
-
+        
         let mut last_number_index = 0;
         let mut last_number: u8 = 0;
         for (i, c) in line.chars().enumerate() {
