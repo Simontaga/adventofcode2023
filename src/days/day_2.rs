@@ -6,6 +6,8 @@ pub struct Day2P1 {
     max_blue: u32,
 }
 
+pub struct Day2P2 {}
+
 #[derive(Debug)]
 struct Game {
     id: u32,
@@ -35,6 +37,13 @@ impl Solution for Day2P1 {
     }
 }
 
+impl Solution for Day2P2 {
+    fn solve(&self, input: &str) {
+        let input = self.get_input(input);
+        println!("Total: {}", self.calculate_game(&input));
+    }
+}
+
 impl Day2P1 {
     pub fn new(r: u32, g: u32, b: u32) -> Self {
         Self {
@@ -45,7 +54,7 @@ impl Day2P1 {
     }
 
     fn calculate_possible_games(&self, input: &str) -> u32 {
-        let games = self.parse_games(input);
+        let games = parse_games(input);
 
         let mut total = 0;
 
@@ -67,67 +76,95 @@ impl Day2P1 {
 
         total
     }
+}
 
-    fn parse_games(&self, input: &str) -> Vec<Game> {
-        /*
-        Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
-         */
-
-        let mut games: Vec<Game> = Vec::new();
-
-        for line in input.lines() {
-            let colon_index = line.find(":").unwrap();
-            let game_index = line.find("Game").unwrap();
-            let game_id = &line[game_index+4..colon_index].trim();
-            let game_id = game_id.parse::<u32>().expect("Game id is not a number");
-
-
-            let game_str = line.get(colon_index+1..).unwrap();
-
-
-
-            let mut rounds_result: Vec<Round> = Vec::new();
-
-            let rounds = game_str.split(";");
-
-            for round in rounds {
-                let round = round.trim();
-                let split = round.split(",");
-
-
-                let mut current_round = Round {
-                    red_count: 0,
-                    green_count: 0,
-                    blue_count: 0,
-                };
-
-                for s in split {
-                    let s = s.trim();
-                    let split = s.split(" ");
-                    let split: Vec<&str> = split.collect();
-
-                    let count = split[0].parse::<u32>().expect("Count is not a number");
-                    let color = split.last().expect("Count is not a number");
-                    match color {
-                        &"red" => { current_round.red_count += count; },
-                        &"green" => { current_round.green_count += count; },
-                        &"blue" => { current_round.blue_count += count; },
-                        _ => { panic!("Unknown color: {}", color);
-                        }
-                    }
-                }
-
-                rounds_result.push(current_round);
-            }
-
-
-            let game = Game::new(game_id, rounds_result);
-            games.push(game);
-        }
-
-        games
+impl Day2P2 {
+    pub fn new() -> Self {
+        Self {}
     }
 
+    fn calculate_game(&self, input: &str) -> u32 {
+        let games =  parse_games(input);
+
+        let mut res = 0;
+
+        for game in games {
+            let mut highest_red = 0;
+            let mut highest_green = 0;
+            let mut highest_blue = 0;
+
+            for round in game.rounds {
+                if round.red_count > highest_red {
+                    highest_red = round.red_count;
+                }
+                if round.green_count > highest_green {
+                    highest_green = round.green_count;
+                }
+                if round.blue_count > highest_blue {
+                    highest_blue = round.blue_count;
+                }
+            }
+
+            res += highest_red * highest_green * highest_blue;
+        }
+
+        res
+    }
+}
+
+fn parse_games(input: &str) -> Vec<Game> {
+    /*
+    Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+     */
+
+    let mut games: Vec<Game> = Vec::new();
+
+    for line in input.lines() {
+        let colon_index = line.find(":").unwrap();
+        let game_index = line.find("Game").unwrap();
+        let game_id = &line[game_index+4..colon_index].trim();
+        let game_id = game_id.parse::<u32>().expect("Game id is not a number");
+
+        let game_str = line.get(colon_index+1..).unwrap();
+
+        let mut rounds_result: Vec<Round> = Vec::new();
+
+        let rounds = game_str.split(";");
+
+        for round in rounds {
+            let round = round.trim();
+            let split = round.split(",");
+
+
+            let mut current_round = Round {
+                red_count: 0,
+                green_count: 0,
+                blue_count: 0,
+            };
+
+            for s in split {
+                let s = s.trim();
+                let split = s.split(" ");
+                let split: Vec<&str> = split.collect();
+
+                let count = split[0].parse::<u32>().expect("Count is not a number");
+                let color = split.last().expect("Count is not a number");
+                match color {
+                    &"red" => { current_round.red_count += count; },
+                    &"green" => { current_round.green_count += count; },
+                    &"blue" => { current_round.blue_count += count; },
+                    _ => { panic!("Unknown color: {}", color);
+                    }
+                }
+            }
+
+            rounds_result.push(current_round);
+        }
+
+        games.push(Game::new(game_id, rounds_result));
+    }
+
+    games
 }
 
 #[cfg(test)]
