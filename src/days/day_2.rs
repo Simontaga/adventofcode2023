@@ -31,15 +31,15 @@ impl Game {
 }
 
 impl Solution for Day2P1 {
-    fn solve(&self, input: &str) -> u32 {
-        self.calculate_possible_games(&input)
-    }
+    fn solve(&self, input: &str) -> u32 { self.calculate_possible_games(&input) }
+
+    fn get_solution_name(&self) -> &str { "Day 2 Part 1" }
+
 }
 
 impl Solution for Day2P2 {
-    fn solve(&self, input: &str) -> u32 {
-        self.calculate_game(&input)
-    }
+    fn solve(&self, input: &str) -> u32 { self.calculate_game(&input) }
+    fn get_solution_name(&self) -> &str { "Day 2 Part 2" }
 }
 
 impl Day2P1 {
