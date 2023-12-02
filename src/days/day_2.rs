@@ -31,16 +31,14 @@ impl Game {
 }
 
 impl Solution for Day2P1 {
-    fn solve(&self, input: &str) {
-        let input = self.get_input(input);
-        println!("Total: {}", self.calculate_possible_games(&input));
+    fn solve(&self, input: &str) -> u32 {
+        self.calculate_possible_games(&input)
     }
 }
 
 impl Solution for Day2P2 {
-    fn solve(&self, input: &str) {
-        let input = self.get_input(input);
-        println!("Total: {}", self.calculate_game(&input));
+    fn solve(&self, input: &str) -> u32 {
+        self.calculate_game(&input)
     }
 }
 
@@ -60,21 +58,25 @@ impl Day2P1 {
 
         for game in games {
 
-            let mut possible = true;
+            let mut game_possible = true;
             for round in game.rounds {
-                if round.red_count > self.max_red ||
-                    round.green_count > self.max_green ||
-                    round.blue_count > self.max_blue {
-                    possible = false;
+                if !self.is_round_possible(&round) {
+                    game_possible = false;
                 }
             }
 
-            if possible {
+            if game_possible {
                 total += game.id;
             }
         }
 
         total
+    }
+
+    fn is_round_possible(&self, round: &Round) -> bool {
+        round.red_count <= self.max_red &&
+            round.green_count <= self.max_green &&
+            round.blue_count <= self.max_blue
     }
 }
 

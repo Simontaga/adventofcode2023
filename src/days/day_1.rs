@@ -6,27 +6,24 @@ pub struct Day1P2 {
 }
 
 impl Solution for Day1P1 {
-    fn solve(&self, input: &str) {
-        let input = self.get_input(input);
-        println!("Total: {}", self.calculate_first_last(&input));
+    fn solve(&self, input: &str) -> u32 {
+        self.calculate_first_last(&input)
     }
-
 }
 
 impl Solution for Day1P2 {
-    fn solve(&self, input: &str) {
-        let input = self.get_input(input);
-        println!("Total: {}", self.calculate_first_last(&input));
+    fn solve(&self, input: &str) -> u32 {
+        self.calculate_first_last(&input)
     }
 }
 
 
 impl Day1P1 {
-    fn calculate_first_last(&self, lines: &str) -> i32 {
-        let mut total = 0;
+    fn calculate_first_last(&self, lines: &str) -> u32 {
+        let mut total: u32 = 0;
         for line in lines.lines() {
             let combine_digit = self.get_combined_digit(line);
-            let combine_digit = combine_digit.parse::<i32>().unwrap();
+            let combine_digit = combine_digit.parse::<u32>().unwrap();
             total += combine_digit;
         }
 
@@ -75,13 +72,13 @@ impl Day1P2 {
     }
 
 
-    fn calculate_first_last(&self, lines: &str) -> i32 {
-        let mut total = 0;
+    fn calculate_first_last(&self, lines: &str) -> u32 {
+        let mut total: u32 = 0;
         for line in lines.lines() {
             let first_digit = self.get_first_digit(line);
             let last_digit = self.get_last_digit(line);
             let combine_digit = format!("{}{}", first_digit, last_digit);
-            let combine_digit = combine_digit.parse::<i32>().unwrap();
+            let combine_digit = combine_digit.parse::<u32>().unwrap();
             total += combine_digit;
         }
 
