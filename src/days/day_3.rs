@@ -5,8 +5,15 @@ use crate::days::solution::Solution;
 // Or psychotic code, you decide.
 
 pub struct Day3P1 {}
+pub struct Day3P2 {}
 
 impl Day3P1 {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+impl Day3P2 {
     pub fn new() -> Self {
         Self {}
     }
@@ -36,6 +43,17 @@ impl Solution for Day3P1 {
 
     fn get_solution_name(&self) -> &str {
         "Day 3 Part 1"
+    }
+}
+
+impl Solution for Day3P2 {
+    fn solve(&self, input: &str) -> u32 {
+        let parsed = parse(input);
+        calculate_day_2(parsed)
+    }
+
+    fn get_solution_name(&self) -> &str {
+        "Day 3 Part 2"
     }
 }
 
@@ -87,7 +105,6 @@ fn calculate_number_stack(number_stack: &Vec<char>) -> u32 {
     number
 }
 
-
 fn calculate_day_1(objects: HashMap<(i32 , i32),(LineObject)>) -> u32 {
     let mut sum = 0;
 
@@ -100,7 +117,6 @@ fn calculate_day_1(objects: HashMap<(i32 , i32),(LineObject)>) -> u32 {
                     Some(LineObject::Symbol(c)) => {
                         sum += n;
                         match_found = true;
-                        println!("Found symbol {c} for {}", n);
                     },
                     _ => {
                     }
@@ -118,6 +134,45 @@ fn calculate_day_1(objects: HashMap<(i32 , i32),(LineObject)>) -> u32 {
     sum
 }
 
+fn calculate_day_2(objects: HashMap<(i32 , i32),(LineObject)>) -> u32 {
+    struct NumberCollision {
+        number: u32,
+        asterisk: (u32, u32),
+    }
+
+    let mut numbers_collided_with_asterisk: Vec<NumberCollision> = Vec::new();
+
+    for ((x,y), object) in &objects {
+        if let LineObject::Number(n, width) = object {
+            for (x, y) in get_3x3_grid(*x, *y, *width) {
+                match objects.get(&(x, y)) {
+                    Some(LineObject::Symbol('*')) => {
+                        numbers_collided_with_asterisk.push(NumberCollision {
+                            number: *n,
+                            asterisk: (x as u32, y as u32),
+                        });
+                    },
+                    _ => {}
+                }
+            }
+        }
+    }
+
+    let mut sum = 0;
+
+    for number in &numbers_collided_with_asterisk {
+        let shared_collisions: Vec<&NumberCollision> = numbers_collided_with_asterisk.iter().filter(|n| n.asterisk == number.asterisk).collect();
+        if shared_collisions.len() != 2 { continue; }
+
+        let multiplied = shared_collisions.iter().map(|n| n.number).product::<u32>();
+        sum += multiplied;
+    }
+
+    // Magic ;)
+    sum/2
+}
+
+// The offset is the width of the number's text representation.
 fn get_3x3_grid(x: i32, y: i32, x_offset: u8) -> Vec<(i32, i32)> {
     let mut grid: Vec<(i32, i32)> = Vec::new();
 
@@ -128,7 +183,6 @@ fn get_3x3_grid(x: i32, y: i32, x_offset: u8) -> Vec<(i32, i32)> {
     }
     grid
 }
-
 
 
 
@@ -148,19 +202,23 @@ mod tests {
 ......755.
 ...$.*....
 .664.598..";
-        let parsed = parse(input);
-        println!("{:?}", parsed);
 
-        println!("{:?}", calculate_day_1(parsed));
-        assert_eq!(1, 1);
+        assert_eq!(calculate_day_1(parse(input)), 4361);
     }
 
     #[test]
-    fn test_d() {
-        let bork = get_3x3_grid(0, 0, 2 );
+    fn test_day_3_part_2() {
+        let input = "467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..";
 
-        println!("{:?}", bork);
-
-        assert_eq!(1, 1);
+        assert_eq!(calculate_day_2(parse(input)), 467835);
     }
 }
