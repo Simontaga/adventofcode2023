@@ -6,13 +6,13 @@ pub struct Day1P2 {
 }
 
 impl Solution for Day1P1 {
-    fn solve(&self, input: &str) -> u32 { self.calculate_first_last(&input) }
+    fn solve(&self, input: &str) -> u32 { self.calculate_first_last(input) }
     fn get_solution_name(&self) -> &str { "Day 1 Part 1" }
 }
 
 impl Solution for Day1P2 {
     fn solve(&self, input: &str) -> u32 {
-        self.calculate_first_last(&input)
+        self.calculate_first_last(input)
     }
     fn get_solution_name(&self) -> &str { "Day 1 Part 2" }
 }

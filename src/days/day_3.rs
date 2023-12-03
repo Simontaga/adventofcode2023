@@ -19,15 +19,6 @@ impl Day3P2 {
     }
 }
 
-// A line contains either a number or a symbol
-// (object, (x,y))
-// x being the index of the line
-// y being the line
-#[derive(Debug)]
-struct Line {
-    objects: HashMap<(i32 , i32),(LineObject)>,
-}
-
 #[derive(Debug)]
 #[derive(Clone)]
 enum LineObject {
@@ -57,28 +48,25 @@ impl Solution for Day3P2 {
     }
 }
 
-fn parse(input: &str) -> HashMap<(i32 , i32),(LineObject)> {
-    let mut input_lines = input.lines();
-    let mut lines: HashMap<(i32 , i32),(LineObject)> = HashMap::new();
+fn parse(input: &str) -> HashMap<(i32 , i32),LineObject> {
+    let input_lines = input.lines();
+    let mut lines: HashMap<(i32 , i32),LineObject> = HashMap::new();
 
     for (y, line) in input_lines.enumerate() {
         let mut number_stack: Vec<(char, i32)> = Vec::new();
 
         for (x, char) in line.chars().enumerate() {
-            // Symbol.
             if char == '.' {
                 handle_num_stack(&mut number_stack, y as i32, &mut lines);
                 continue;
             }
 
-
-            if !char.is_digit(10) {
+            if !char.is_ascii_digit() {
                 lines.insert( (x as i32, y as i32), LineObject::Symbol(char));
                 handle_num_stack(&mut number_stack, y as i32, &mut lines);
                 continue;
             }
 
-            // Number.
            number_stack.push((char, x as i32));
         }
     }
@@ -86,26 +74,25 @@ fn parse(input: &str) -> HashMap<(i32 , i32),(LineObject)> {
     lines
 }
 
-fn handle_num_stack(number_stack: &mut Vec<(char, i32)>, y: i32, lines: &mut HashMap<(i32 , i32),(LineObject)>) {
+fn handle_num_stack(number_stack: &mut Vec<(char, i32)>, y: i32, lines: &mut HashMap<(i32 , i32),LineObject>) {
     if number_stack.is_empty() {
         return;
     }
 
-    let chars = &number_stack.iter().map(|(c, _)| c.clone()).collect::<Vec<char>>();
+    let chars = &number_stack.iter().map(|(c, _)| *c).collect::<Vec<char>>();
     let highest_x = &number_stack.iter().map(|(_, x)| x).max().unwrap();
-    let val = calculate_number_stack(&chars);
+    let val = calculate_number_stack(chars);
     lines.insert( (**highest_x, y), LineObject::Number(val, chars.len() as u8));
     number_stack.clear();
-
 }
 
-fn calculate_number_stack(number_stack: &Vec<char>) -> u32 {
+fn calculate_number_stack(number_stack: &[char]) -> u32 {
     let string = number_stack.iter().collect::<String>();
-    let number = string.parse::<u32>().expect("Not a number");
-    number
+    
+    string.parse::<u32>().expect("Not a number")
 }
 
-fn calculate_day_1(objects: HashMap<(i32 , i32),(LineObject)>) -> u32 {
+fn calculate_day_1(objects: HashMap<(i32 , i32),LineObject>) -> u32 {
     let mut sum = 0;
 
     for ((x,y), object) in &objects {
@@ -113,28 +100,23 @@ fn calculate_day_1(objects: HashMap<(i32 , i32),(LineObject)>) -> u32 {
         if let LineObject::Number(n, width) = object {
             for (x, y) in get_3x3_grid(*x, *y, *width) {
                 let mut match_found = false;
-                match objects.get(&(x, y)) {
-                    Some(LineObject::Symbol(c)) => {
-                        sum += n;
-                        match_found = true;
-                    },
-                    _ => {
-                    }
+
+                if let Some(LineObject::Symbol(_)) = objects.get(&(x, y)) {
+                    sum += n;
+                    match_found = true;
                 }
+
                 if match_found {
                     break;
                 }
             }
         }
-
-
     }
-
 
     sum
 }
 
-fn calculate_day_2(objects: HashMap<(i32 , i32),(LineObject)>) -> u32 {
+fn calculate_day_2(objects: HashMap<(i32 , i32),LineObject>) -> u32 {
     struct NumberCollision {
         number: u32,
         asterisk: (u32, u32),
@@ -145,14 +127,12 @@ fn calculate_day_2(objects: HashMap<(i32 , i32),(LineObject)>) -> u32 {
     for ((x,y), object) in &objects {
         if let LineObject::Number(n, width) = object {
             for (x, y) in get_3x3_grid(*x, *y, *width) {
-                match objects.get(&(x, y)) {
-                    Some(LineObject::Symbol('*')) => {
-                        numbers_collided_with_asterisk.push(NumberCollision {
-                            number: *n,
-                            asterisk: (x as u32, y as u32),
-                        });
-                    },
-                    _ => {}
+
+                if let Some(LineObject::Symbol('*')) = objects.get(&(x, y)) {
+                    numbers_collided_with_asterisk.push(NumberCollision {
+                        number: *n,
+                        asterisk: (x as u32, y as u32),
+                    });
                 }
             }
         }

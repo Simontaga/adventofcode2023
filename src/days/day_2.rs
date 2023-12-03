@@ -31,14 +31,14 @@ impl Game {
 }
 
 impl Solution for Day2P1 {
-    fn solve(&self, input: &str) -> u32 { self.calculate_possible_games(&input) }
+    fn solve(&self, input: &str) -> u32 { self.calculate_possible_games(input) }
 
     fn get_solution_name(&self) -> &str { "Day 2 Part 1" }
 
 }
 
 impl Solution for Day2P2 {
-    fn solve(&self, input: &str) -> u32 { self.calculate_game(&input) }
+    fn solve(&self, input: &str) -> u32 { self.calculate_game(input) }
     fn get_solution_name(&self) -> &str { "Day 2 Part 2" }
 }
 
@@ -122,7 +122,7 @@ fn parse_games(input: &str) -> Vec<Game> {
     let mut games: Vec<Game> = Vec::new();
 
     for line in input.lines() {
-        let colon_index = line.find(":").unwrap();
+        let colon_index = line.find(':').unwrap();
         let game_index = line.find("Game").unwrap();
         let game_id = &line[game_index+4..colon_index].trim();
         let game_id = game_id.parse::<u32>().expect("Game id is not a number");
@@ -131,11 +131,11 @@ fn parse_games(input: &str) -> Vec<Game> {
 
         let mut rounds_result: Vec<Round> = Vec::new();
 
-        let rounds = game_str.split(";");
+        let rounds = game_str.split(';');
 
         for round in rounds {
             let round = round.trim();
-            let split = round.split(",");
+            let split = round.split(',');
 
 
             let mut current_round = Round {
@@ -146,7 +146,7 @@ fn parse_games(input: &str) -> Vec<Game> {
 
             for s in split {
                 let s = s.trim();
-                let split = s.split(" ");
+                let split = s.split(' ');
                 let split: Vec<&str> = split.collect();
 
                 let count = split[0].parse::<u32>().expect("Count is not a number");
@@ -184,6 +184,6 @@ Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
 Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
 Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
 
-        assert_eq!(day2.calculate_possible_games(&input), 8);
+        assert_eq!(day2.calculate_possible_games(input), 8);
     }
 }
