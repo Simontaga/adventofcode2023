@@ -1,7 +1,7 @@
 use days::{day_1::{Day1P1, Day1P2}, solution::Solution};
 use days::{day_2::{Day2P1, Day2P2}};
 use days::{day_3::{Day3P1, Day3P2}};
-use days::{day_4::{Day4P1}};
+use days::{day_4::{Day4P1, Day4P2}};
 mod days;
 fn main() {
 
@@ -27,4 +27,6 @@ fn main() {
     let day_four_input = include_str!("input/day_4.txt");
 
     Day4P1::new().solve_verbose(day_four_input);
+
+    Day4P2::new().solve_verbose(day_four_input);
 }
